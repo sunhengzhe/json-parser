@@ -1,0 +1,43 @@
+/** Token */
+class Token {
+  constructor(tag) {
+    this.tag = tag;
+  }
+}
+
+/** Tag */
+class Tag {}
+Tag.NUM = 256;
+Tag.STRING = 257;
+Tag.COMMA = 258; // ,
+Tag.SQUARE_OPEN = 259;
+Tag.SQUARE_CLOSE = 260;
+Tag.BLOCK_OPEN = 261;
+Tag.BLOCK_CLOSE = 262;
+Tag.QUOTATION = 263;
+Tag.COLON = 264; // :
+Tag.NULL = 265;
+Tag.BOOLEAN = 267;
+
+/** Integer */
+class Integer extends Token {
+  constructor(value) {
+    super(Tag.NUM);
+    this.value = value;
+  }
+}
+
+/** String */
+class Str extends Token {
+  constructor(value) {
+    super(Tag.STRING);
+    this.value = value;
+  }
+}
+
+module.exports = {
+  Token,
+  Tag,
+  Str,
+  Integer,
+};
