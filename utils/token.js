@@ -35,9 +35,24 @@ class Str extends Token {
   }
 }
 
+class Bool extends Token {
+  constructor(value) {
+    super(Tag.BOOLEAN);
+    this.value = value;
+  }
+}
+
+class Null extends Token {
+  constructor() {
+    super(Tag.NULL);
+  }
+}
+
 module.exports = {
   Token,
   Tag,
   Str,
   Integer,
+  Bool,
+  Null,
 };

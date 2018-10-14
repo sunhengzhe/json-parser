@@ -1,5 +1,5 @@
 const {
-  Token, Str, Integer, Tag,
+  Token, Str, Integer, Tag, Bool, Null,
 } = require('./token');
 
 const Util = {
@@ -38,6 +38,7 @@ class Lexer {
   }
 
   scan() {
+    // skip spacing
     for (;; this.peek = this.nextToken()) {
       if (Util.isLineBreak(this.peek)) {
         this.line += 1;
@@ -51,7 +52,7 @@ class Lexer {
       }
     }
 
-    // 提取数值型
+    // number
     if (Util.isDigit(this.peek)) {
       let value = 0;
       do {
@@ -62,6 +63,7 @@ class Lexer {
       return new Integer(value);
     }
 
+    // string
     if (this.peek === '"') {
       let str = '';
       let next = this.nextToken();
@@ -69,10 +71,53 @@ class Lexer {
         str += next;
         next = this.nextToken();
       }
+
+      if (next !== '"') {
+        throw new SyntaxError('Unexpected end of JSON input');
+      }
+
       this.peek = ' ';
       return new Str(str);
     }
 
+    // boolean
+    if (this.peek === 't' || this.peek === 'f') {
+      if (
+        this.peek === 't' &&
+        this.nextToken() === 'r' &&
+        this.nextToken() === 'u' &&
+        this.nextToken() === 'e'
+      ) {
+        this.peek = ' ';
+        return new Bool(1);
+      }
+
+      if (
+        this.peek === 'f' &&
+        this.nextToken() === 'a' &&
+        this.nextToken() === 'l' &&
+        this.nextToken() === 's' &&
+        this.nextToken() === 'e'
+      ) {
+        this.peek = ' ';
+        return new Bool(0);
+      }
+    }
+
+    // null
+    if (this.peek === 'n') {
+      if (
+        this.peek === 'n' &&
+        this.nextToken() === 'u' &&
+        this.nextToken() === 'l' &&
+        this.nextToken() === 'l'
+      ) {
+        this.peek = ' ';
+        return new Null();
+      }
+    }
+
+    // others
     const tagMap = {
       ',': Tag.COMMA,
       ':': Tag.COLON,
@@ -88,9 +133,7 @@ class Lexer {
       return new Token(tag);
     }
 
-    const token = new Token(this.peek);
-    this.peek = ' ';
-    return token;
+    throw new SyntaxError(`Unexpected token ${this.peek} in JSON at line ${this.line} position ${this.readPos}`)
   }
 }
 
