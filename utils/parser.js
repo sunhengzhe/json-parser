@@ -9,9 +9,24 @@ const stateMap = {
     [Tag.SQUARE_OPEN]: 8,
     E: 7,
     [Tag.STRING]: 15,
+    [Tag.BOOLEAN]: 21,
+    [Tag.NUM]: 22,
+    [Tag.NULL]: 23,
   },
   2: {
+    O: 3,
     [Tag.BLOCK_CLOSE]: 4,
+    P: 5,
+    [Tag.STRING]: 6,
+  },
+  3: {
+    [Tag.BLOCK_CLOSE]: 4,
+  },
+  5: {
+    [Tag.COMMA]: 16,
+  },
+  6: {
+    [Tag.COLON]: 19,
   },
   7: {
     [Tag.$]: ACCEPT,
@@ -24,6 +39,9 @@ const stateMap = {
     T: 11,
     E: 12,
     [Tag.STRING]: 15,
+    [Tag.BOOLEAN]: 21,
+    [Tag.NUM]: 22,
+    [Tag.NULL]: 23,
   },
   10: {
     [Tag.SQUARE_CLOSE]: 9,
@@ -40,12 +58,35 @@ const stateMap = {
   14: {
     [Tag.COMMA]: 13,
   },
+  16: {
+    P: 17,
+    [Tag.STRING]: 18,
+  },
+  17: {
+    [Tag.COMMA]: 16,
+  },
+  18: {
+    [Tag.COLON]: 19,
+  },
+  19: {
+    E: 20,
+    [Tag.BLOCK_OPEN]: 2,
+    [Tag.SQUARE_OPEN]: 8,
+    [Tag.STRING]: 15,
+    [Tag.BOOLEAN]: 21,
+    [Tag.NUM]: 22,
+    [Tag.NULL]: 23,
+  },
 };
 
 const finishStatesMap = {
   4: {
     popUtil: Tag.BLOCK_OPEN,
     reduceTo: 'E',
+  },
+  5: {
+    popUtil: 'P',
+    reduceTo: 'O',
   },
   9: {
     popUtil: Tag.SQUARE_OPEN,
@@ -65,6 +106,26 @@ const finishStatesMap = {
   },
   15: {
     popUtil: Tag.STRING,
+    reduceTo: 'E',
+  },
+  17: {
+    popTimes: 3,
+    reduceTo: 'P',
+  },
+  20: {
+    popUtil: Tag.STRING,
+    reduceTo: 'P',
+  },
+  21: {
+    popUtil: Tag.BOOLEAN,
+    reduceTo: 'E',
+  },
+  22: {
+    popUtil: Tag.NUM,
+    reduceTo: 'E',
+  },
+  23: {
+    popUtil: Tag.NULL,
     reduceTo: 'E',
   },
 };
