@@ -8,6 +8,7 @@ const stateMap = {
     [Tag.BLOCK_OPEN]: 2,
     [Tag.SQUARE_OPEN]: 8,
     E: 7,
+    [Tag.STRING]: 15,
   },
   2: {
     [Tag.BLOCK_CLOSE]: 4,
@@ -22,6 +23,7 @@ const stateMap = {
     L: 10,
     T: 11,
     E: 12,
+    [Tag.STRING]: 15,
   },
   10: {
     [Tag.SQUARE_CLOSE]: 9,
@@ -60,6 +62,10 @@ const finishStatesMap = {
   14: {
     popTimes: 3,
     reduceTo: 'T',
+  },
+  15: {
+    popUtil: Tag.STRING,
+    reduceTo: 'E',
   },
 };
 
