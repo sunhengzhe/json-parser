@@ -1,10 +1,12 @@
 const { Tag } = require('./token');
 
 const ACCEPT = 'ACCEPT';
+const START_STATE = 1;
 
 const stateMap = {
   1: {
     [Tag.BLOCK_OPEN]: 2,
+    [Tag.SQUARE_OPEN]: 8,
     E: 7,
   },
   2: {
@@ -13,13 +15,35 @@ const stateMap = {
   7: {
     [Tag.$]: ACCEPT,
   },
+  8: {
+    [Tag.SQUARE_CLOSE]: 9,
+    [Tag.SQUARE_OPEN]: 8,
+    [Tag.BLOCK_OPEN]: 2,
+    L: 10,
+    T: 11,
+    E: 12,
+  },
+  10: {
+    [Tag.SQUARE_CLOSE]: 9,
+  },
 };
-const finishStates = [4];
-const popUtilMap = {
-  4: Tag.BLOCK_OPEN,
-};
-const reduceTagMap = {
-  4: 'E',
+const finishStatesMap = {
+  4: {
+    popUtil: Tag.BLOCK_OPEN,
+    reduceTo: 'E',
+  },
+  9: {
+    popUtil: Tag.SQUARE_OPEN,
+    reduceTo: 'E',
+  },
+  11: {
+    popUtil: 'T',
+    reduceTo: 'L',
+  },
+  12: {
+    popUtil: 'E',
+    reduceTo: 'T',
+  },
 };
 
 const getNextState = (curState, tag) => {
@@ -37,7 +61,7 @@ class Parser {
 
   parsing() {
     const { lexer } = this;
-    const stack = [[1]];
+    const stack = [[START_STATE]];
     let tag;
 
     do {
@@ -45,19 +69,23 @@ class Parser {
 
       const [curState] = stack[stack.length - 1];
       let nextState = getNextState(curState, tag);
+      if (!nextState) {
+        return { status: -1 };
+      }
       if (nextState === ACCEPT) {
         return { status: 0 };
       }
       stack.push([nextState, tag]);
 
-      while (finishStates.includes(nextState)) {
+      while (finishStatesMap[nextState]) {
+        const { popUtil, reduceTo } = finishStatesMap[nextState];
         let [, popTag] = stack.pop();
-        while (popTag !== popUtilMap[nextState]) {
+        while (popTag !== popUtil) {
           [, popTag] = stack.pop();
         }
         const [preState] = stack[stack.length - 1];
-        nextState = getNextState(preState, reduceTagMap[nextState]);
-        stack.push([nextState, reduceTagMap[nextState]]);
+        nextState = getNextState(preState, reduceTo);
+        stack.push([nextState, reduceTo]);
       }
     } while (tag !== Tag.$);
 
