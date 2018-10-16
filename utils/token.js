@@ -7,18 +7,18 @@ class Token {
 
 /** Tag */
 class Tag {}
-Tag.NUM = 256;
-Tag.STRING = 257;
-Tag.COMMA = 258; // ,
-Tag.SQUARE_OPEN = 259;
-Tag.SQUARE_CLOSE = 260;
-Tag.BLOCK_OPEN = 261;
-Tag.BLOCK_CLOSE = 262;
-Tag.QUOTATION = 263;
-Tag.COLON = 264; // :
-Tag.NULL = 265;
-Tag.BOOLEAN = 267;
-Tag.$ = 268;
+Tag.NUM = 'num';
+Tag.STRING = 'str';
+Tag.COMMA = ','; // ,
+Tag.SQUARE_OPEN = '[';
+Tag.SQUARE_CLOSE = ']';
+Tag.BLOCK_OPEN = '{';
+Tag.BLOCK_CLOSE = '}';
+Tag.QUOTATION = '"';
+Tag.COLON = ':'; // :
+Tag.NULL = 'null';
+Tag.BOOLEAN = 'bool';
+Tag.$ = '$';
 
 /** Integer */
 class Integer extends Token {
