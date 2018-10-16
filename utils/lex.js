@@ -137,6 +137,6 @@ class Lexer {
   }
 }
 
-Lexer.$ = '_lexer_$';
+Lexer.$ = new Token(Tag.$);
 
 module.exports = Lexer;

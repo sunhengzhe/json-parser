@@ -18,6 +18,7 @@ Tag.QUOTATION = 263;
 Tag.COLON = 264; // :
 Tag.NULL = 265;
 Tag.BOOLEAN = 267;
+Tag.$ = 268;
 
 /** Integer */
 class Integer extends Token {
