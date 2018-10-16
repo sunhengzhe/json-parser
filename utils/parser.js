@@ -58,7 +58,7 @@ const finishStatesMap = {
     reduceTo: 'T',
   },
   14: {
-    popUtil: 'T',
+    popTimes: 3,
     reduceTo: 'T',
   },
 };
@@ -109,10 +109,16 @@ class Parser {
         finishStatesMap[nextState] &&
         followSetMap[finishStatesMap[nextState].reduceTo].includes(nextTag)
       ) {
-        const { popUtil, reduceTo } = finishStatesMap[nextState];
-        let [, popTag] = stack.pop();
-        while (popTag !== popUtil) {
-          [, popTag] = stack.pop();
+        const { popUtil, reduceTo, popTimes } = finishStatesMap[nextState];
+        if (popTimes > 0) {
+          for (let i = popTimes; i > 0; i -= 1) {
+            stack.pop();
+          }
+        } else {
+          let [, popTag] = stack.pop();
+          while (popTag !== popUtil) {
+            [, popTag] = stack.pop();
+          }
         }
         const [preState] = stack[stack.length - 1];
         nextState = getNextState(preState, reduceTo);
