@@ -54,6 +54,10 @@ const stateMap = {
     E: 12,
     [Tag.BLOCK_OPEN]: 2,
     [Tag.SQUARE_OPEN]: 8,
+    [Tag.STRING]: 15,
+    [Tag.BOOLEAN]: 21,
+    [Tag.NUM]: 22,
+    [Tag.NULL]: 23,
   },
   14: {
     [Tag.COMMA]: 13,
@@ -177,19 +181,23 @@ class Parser {
         followSetMap[finishStatesMap[nextState].reduceTo].includes(nextTag)
       ) {
         const { popUtil, reduceTo, popTimes } = finishStatesMap[nextState];
+        const popTags = [];
         if (popTimes > 0) {
           for (let i = popTimes; i > 0; i -= 1) {
-            stack.pop();
+            popTags.push(stack.pop()[1]);
           }
         } else {
           let [, popTag] = stack.pop();
+          popTags.push(popTag);
           while (popTag !== popUtil) {
             [, popTag] = stack.pop();
+            popTags.push(popTag);
           }
         }
         const [preState] = stack[stack.length - 1];
         nextState = getNextState(preState, reduceTo);
         stack.push([nextState, reduceTo]);
+        console.log(popTags.reverse().join(''), '--->', reduceTo);
       }
     } while (tag !== Tag.$);
 

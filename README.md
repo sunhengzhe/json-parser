@@ -1,10 +1,24 @@
 # JSON parser
 
+## Demo
+
+### check json
+
+```js
+node index '{"year": 2018}'
+```
+
+### test
+
+```js
+npm test
+```
+
 ## Parsing
 
 ### CFG
 
-```
+```bfs
 S -> E
 E -> [L] | {O} | str | bool | num | null
 L -> T | ε
