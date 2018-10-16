@@ -26,7 +26,20 @@ const stateMap = {
   10: {
     [Tag.SQUARE_CLOSE]: 9,
   },
+  11: {
+    [Tag.COMMA]: 13,
+  },
+  13: {
+    T: 14,
+    E: 12,
+    [Tag.BLOCK_OPEN]: 2,
+    [Tag.SQUARE_OPEN]: 8,
+  },
+  14: {
+    [Tag.COMMA]: 13,
+  },
 };
+
 const finishStatesMap = {
   4: {
     popUtil: Tag.BLOCK_OPEN,
@@ -44,6 +57,19 @@ const finishStatesMap = {
     popUtil: 'E',
     reduceTo: 'T',
   },
+  14: {
+    popUtil: 'T',
+    reduceTo: 'T',
+  },
+};
+
+const followSetMap = {
+  S: [Tag.$],
+  E: [Tag.$, Tag.COMMA, Tag.SQUARE_CLOSE, Tag.BLOCK_CLOSE],
+  T: [Tag.COMMA, Tag.SQUARE_CLOSE],
+  L: [Tag.SQUARE_CLOSE],
+  P: [Tag.COMMA, Tag.BLOCK_CLOSE],
+  O: [Tag.BLOCK_CLOSE],
 };
 
 const getNextState = (curState, tag) => {
@@ -63,9 +89,11 @@ class Parser {
     const { lexer } = this;
     const stack = [[START_STATE]];
     let tag;
+    let nextTag;
 
     do {
-      ({ tag } = lexer.scan());
+      tag = nextTag || lexer.scan().tag;
+      ({ tag: nextTag } = lexer.scan());
 
       const [curState] = stack[stack.length - 1];
       let nextState = getNextState(curState, tag);
@@ -77,7 +105,10 @@ class Parser {
       }
       stack.push([nextState, tag]);
 
-      while (finishStatesMap[nextState]) {
+      while (
+        finishStatesMap[nextState] &&
+        followSetMap[finishStatesMap[nextState].reduceTo].includes(nextTag)
+      ) {
         const { popUtil, reduceTo } = finishStatesMap[nextState];
         let [, popTag] = stack.pop();
         while (popTag !== popUtil) {

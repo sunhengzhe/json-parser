@@ -7,5 +7,6 @@ describe('parser test', () => {
     expect(new Parser(new Lexer('[]')).parsing().status).toBe(0);
     expect(new Parser(new Lexer('[{}]')).parsing().status).toBe(0);
     expect(new Parser(new Lexer('[[]]')).parsing().status).toBe(0);
+    expect(new Parser(new Lexer('[[], {}, {}]')).parsing().status).toBe(0);
   });
 });
